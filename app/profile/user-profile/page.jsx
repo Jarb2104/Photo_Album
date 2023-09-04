@@ -14,14 +14,12 @@ const ProfilePage = () => {
 		const fetchPosts = async () => {
 			const response = await fetch(`../api/users/${userId}/posts`);
 			const data = await response.json();
-			console.log(data);
 			setFetchedPosts(data);
 		};
 
 		const fetchUser = async () => {
 			const response = await fetch(`../api/users/${userId}`);
 			const data = await response.json();
-			console.log(data);
 			setUser(data);
 		};
 

@@ -3,8 +3,6 @@ import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismaPhotoAlbumPrompts from '@utils/dbConnection/prismaClient';
 
-console.log({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET });
-
 const authHandler = NextAuth({
 	adapter: PrismaAdapter(prismaPhotoAlbumPrompts),
 
@@ -22,7 +20,6 @@ const authHandler = NextAuth({
 					email: session.user.email,
 				},
 			});
-			console.log(sessionUser);
 			session.user.id = sessionUser.id;
 			return session;
 		},

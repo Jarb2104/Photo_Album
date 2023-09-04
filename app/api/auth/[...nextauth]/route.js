@@ -6,7 +6,7 @@ import prismaPhotoAlbumPrompts from '@utils/dbConnection/prismaClient';
 console.log({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET });
 
 const authHandler = NextAuth({
-	adapter: PrismaAdapter(prisma),
+	adapter: PrismaAdapter(prismaPhotoAlbumPrompts),
 
 	providers: [
 		GoogleProvider({

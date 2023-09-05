@@ -1,5 +1,6 @@
 import NavBar from '@components/NavBar';
-import Provider from '@components/Provider';
+import AuthProvider from '@components/Providers/AuthProvider';
+import ReduxProvider from '../components/Providers/ReduxProvider';
 import '@styles/globals.css';
 
 export const metadata = {
@@ -11,15 +12,17 @@ const MainLayout = ({ children }) => {
 	return (
 		<html lang='en'>
 			<body>
-				<Provider>
-					<div className='main'>
-						<div className='gradient' />
-					</div>
-					<main className='app'>
-						<NavBar />
-						{children}
-					</main>
-				</Provider>
+				<AuthProvider>
+					<ReduxProvider>
+						<div className='main'>
+							<div className='gradient' />
+						</div>
+						<main className='app'>
+							<NavBar />
+							{children}
+						</main>
+					</ReduxProvider>
+				</AuthProvider>
 			</body>
 		</html>
 	);

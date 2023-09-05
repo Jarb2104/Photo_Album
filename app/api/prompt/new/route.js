@@ -1,10 +1,10 @@
 import prismaPhotoAlbumPrompts from '@utils/dbConnection/prismaClient';
 
 export const POST = async (req) => {
-	const { userId, prompt, tag, imgUrl } = await req.json();
+	const { userId, prompt, tags, imgUrl } = await req.json();
 	try {
-		let tags = tag.split(',');
-		tags = tags.slice(0, 4);
+		let tagList = tags.split(',');
+		tagList = tagList.slice(0, 4);
 
 		const newPrompt = await prismaPhotoAlbumPrompts.prompt.create({
 			data: {
@@ -12,7 +12,7 @@ export const POST = async (req) => {
 				prompt: prompt,
 				imgUrl: imgUrl,
 				tags: {
-					create: tags.map((t) => ({ tag: t })),
+					create: tagList.map((t) => ({ tag: t })),
 				},
 			},
 		});

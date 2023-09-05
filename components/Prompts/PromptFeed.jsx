@@ -2,38 +2,35 @@
 
 import { useEffect, useState } from 'react';
 import PromptCardList from './PromptCardList';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPrompts } from '@app/redux/features/promptsSlice';
 
 const PromptFeed = () => {
+	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
-	const [fetchedPosts, setFetchedPosts] = useState([]);
-	const [filteredPosts, setFilteredPosts] = useState([]);
+	const [filteredPrompts, setFilteredPrompts] = useState([]);
+	const fetchedPrompts = useSelector((state) => state.promptsList.prompts);
+	const promptApiCallStatus = useSelector((state) => state.promptsList.status);
 
-	const filterPosts = (filterText) => {
-		const pattern = new RegExp(`.*${filterText}.*`);
-		const filteredPosts = fetchedPosts.filter((post) => pattern.test(post.user.name) || pattern.test(post.prompt) || post.tags.some((t) => pattern.test(t.tag)));
-		setFilteredPosts(filteredPosts);
+	const filterSearch = () => {
+		const pattern = new RegExp(`.*${searchText}.*`);
+		setFilteredPrompts(fetchedPrompts.filter((pr) => pattern.test(pr.user.name) || pattern.test(pr.prompt) || pr.tags.some((t) => pattern.test(t.tag))));
 	};
 
 	const handleSearch = (e) => {
 		setSearchText(e.target.value);
-		filterPosts(e.target.value);
+		filterSearch();
 	};
 
 	const handleTagClick = (tagName) => {
 		setSearchText(tagName);
-		filterPosts(tagName);
+		filterSearch();
 	};
 
 	useEffect(() => {
-		const fetchPosts = async () => {
-			const response = await fetch('/api/prompt');
-			const data = await response.json();
-			setFetchedPosts(data);
-			setFilteredPosts(data);
-		};
-
-		fetchPosts();
-	}, []);
+		if (promptApiCallStatus === 'idle') dispatch(fetchPrompts());
+		filterSearch();
+	}, [promptApiCallStatus]);
 
 	return (
 		<section className='feed'>
@@ -49,7 +46,7 @@ const PromptFeed = () => {
 			</form>
 
 			<PromptCardList
-				fetchedPrompts={filteredPosts}
+				fetchedPrompts={filteredPrompts}
 				handleTagClick={handleTagClick}
 			/>
 		</section>

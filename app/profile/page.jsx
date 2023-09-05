@@ -1,40 +1,31 @@
 'use client';
+import { deletePrompt, selectPromptsByUserId } from '@app/redux/features/promptsSlice';
 import Profile from '@components/Profile';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProfilePage = () => {
-	const { data: session } = useSession();
-	const [fetchedPosts, setFetchedPosts] = useState([]);
+	const dispatch = useDispatch();
 	const router = useRouter();
+
+	const { data: session } = useSession();
+	const fetchedPosts = useSelector((state) => selectPromptsByUserId(state, session?.user.id));
 
 	const handleChange = (prompt) => {
 		router.push(`/update-prompt?id=${prompt.id}`);
 	};
+
 	const handleDelete = async (promptId) => {
 		const hasConfirmed = confirm('Are you sure you want to delete your prompt?');
 		if (hasConfirmed) {
 			try {
-				const filteredPosts = fetchedPosts.filter((post) => post.id !== promptId);
-				await fetch(`api/prompt/${promptId}`, { method: 'DELETE' });
-
-				setFetchedPosts(filteredPosts);
+				await dispatch(deletePrompt(promptId)).unwrap();
 			} catch (error) {
 				console.log(error);
 			}
 		}
 	};
-
-	useEffect(() => {
-		const fetchPosts = async () => {
-			const response = await fetch(`api/users/${session?.user.id}/posts`);
-			const data = await response.json();
-			setFetchedPosts(data);
-		};
-
-		if (session?.user.id) fetchPosts();
-	}, []);
 
 	return (
 		<Profile

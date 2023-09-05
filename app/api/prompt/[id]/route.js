@@ -21,9 +21,20 @@ export const GET = async (req, { params }) => {
 
 export const PATCH = async (req, { params }) => {
 	try {
-		const { prompt, tag, imgUrl } = await req.json();
-		let tags = tag.split(',');
-		tags = tags.slice(0, 4);
+		const { prompt, tags, imgUrl } = await req.json();
+		let tagList = tags.split(',');
+		tagList = tagList.slice(0, 4);
+
+		await prismaPhotoAlbumPrompts.prompt.update({
+			where: {
+				id: params.id,
+			},
+			data: {
+				tags: {
+					deleteMany: {},
+				},
+			},
+		});
 
 		const promptData = await prismaPhotoAlbumPrompts.prompt.update({
 			where: {
@@ -33,7 +44,10 @@ export const PATCH = async (req, { params }) => {
 				prompt: prompt,
 				imgUrl: imgUrl,
 				tags: {
-					create: tags.map((t) => ({ tag: t })),
+					connectOrCreate: tagList.map((t) => ({
+						where: { tag: t },
+						create: { tag: t },
+					})),
 				},
 			},
 		});
@@ -41,7 +55,7 @@ export const PATCH = async (req, { params }) => {
 		if (!promptData) return new Response(JSON.stringify('Prompt not found'), { status: 404 });
 		return new Response(JSON.stringify(promptData), { status: 200 });
 	} catch (error) {
-		return new Response(JSON.stringify(`Failed to fetch prompt from the DB ${error}`), { status: 500 });
+		return new Response(JSON.stringify(`Failed to update the prompt in the DB ${error}`), { status: 500 });
 	}
 };
 
@@ -56,6 +70,6 @@ export const DELETE = async (req, { params }) => {
 		if (!promptData) return new Response(JSON.stringify('Prompt not found'), { status: 404 });
 		return new Response(JSON.stringify(promptData), { status: 200 });
 	} catch (error) {
-		return new Response(JSON.stringify(`Failed to fetch prompt from the DB ${error}`), { status: 500 });
+		return new Response(JSON.stringify(`Failed to delete the prompt from the DB ${error}`), { status: 500 });
 	}
 };

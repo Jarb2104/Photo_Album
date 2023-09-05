@@ -23,25 +23,6 @@ const authHandler = NextAuth({
 			session.user.id = sessionUser.id;
 			return session;
 		},
-
-		async signIn({ profile }) {
-			try {
-				const userExists = await prismaPhotoAlbumPrompts.user.findUnique({
-					where: {
-						email: profile.email,
-					},
-				});
-
-				if (!userExists) {
-					console.log('this is a new user!');
-				}
-
-				return true;
-			} catch (error) {
-				console.log(error);
-				return false;
-			}
-		},
 	},
 });
 

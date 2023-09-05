@@ -36,8 +36,8 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
 						<span>(Anime, Samurai, Armor, YourImagination)</span>
 					</span>
 					<input
-						value={post.tag}
-						onChange={(e) => setPost({ ...post, tag: e.target.value })}
+						value={post.tags}
+						onChange={(e) => setPost({ ...post, tags: e.target.value })}
 						placeholder='YourImagination... (up to 5 tags)'
 						required
 						className='form_input'

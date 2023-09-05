@@ -71,8 +71,8 @@ model Prompt {
 
 model Tag {
   id            String    @id @default(cuid())
-  tag           String
+  tag           String    @unique
   promptId      String
 
-  prompt Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  prompt Prompt? @relation(fields: [promptId], references: [id], onDelete: Cascade)
 }

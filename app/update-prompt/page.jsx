@@ -2,45 +2,52 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import Form from '@components/Form';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPromptById, updatePrompt } from '@app/redux/features/promptsSlice';
 
 const EditPrompt = () => {
+	const dispatch = useDispatch();
+
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const promptId = searchParams.get('id');
+	const promptData = useSelector((state) => selectPromptById(state, promptId));
+
 	const [submitting, setSubmitting] = useState(false);
-	const [userPost, setUserPost] = useState({ prompt: '', imgUrl: '', tag: '' });
+	const [userPost, setUserPost] = useState({ prompt: '', tags: '', imgUrl: '' });
 
 	useEffect(() => {
-		const getPromptDetails = async () => {
-			const response = await fetch(`api/prompt/${promptId}`);
-			const promptData = await response.json();
-
-			setUserPost({
-				prompt: promptData.prompt,
-				tag: promptData.tag,
-				imgUrl: promptData.imgUrl,
-			});
-		};
-
-		if (promptId) getPromptDetails();
+		if (promptId) {
+			if (promptData) {
+				setUserPost({
+					prompt: promptData.prompt,
+					tags: promptData.tags.map((t) => t.tag).toString(),
+					imgUrl: promptData.imgUrl,
+				});
+			} else {
+				alert('Prompt not found');
+				router.push('/');
+			}
+		}
 	}, [promptId]);
 
-	const updatePrompt = async (e) => {
+	const updateChangedPrompt = async (e) => {
 		e.preventDefault();
 		setSubmitting(true);
 
 		if (!promptId) return alert('Unable to find modified prompt');
 
 		try {
-			const changedPrompt = { prompt: userPost.prompt, tag: userPost.tag, imgUrl: userPost.imgUrl };
-			const response = await fetch(`api/prompt/${promptId}`, {
-				method: 'PATCH',
-				body: JSON.stringify(changedPrompt),
-			});
-
-			if (response.ok) {
-				router.push('/');
-			}
+			const changedPrompt = {
+				promptId: promptId,
+				newValues: {
+					prompt: userPost.prompt,
+					imgUrl: userPost.imgUrl,
+					tags: userPost.tags,
+				},
+			};
+			await dispatch(updatePrompt(changedPrompt)).unwrap();
+			router.push('/');
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -54,7 +61,7 @@ const EditPrompt = () => {
 			post={userPost}
 			setPost={setUserPost}
 			submitting={submitting}
-			handleSubmit={updatePrompt}
+			handleSubmit={updateChangedPrompt}
 		/>
 	);
 };

@@ -5,6 +5,7 @@ const TagList = ({ tagData, lstClassName, btnClassName, handleListTagClick }) =>
 		<div className={lstClassName}>
 			{tagData &&
 				tagData
+					.slice()
 					.sort((t1, t2) => parseFloat(t2.count) - parseFloat(t1.count))
 					.map((tag) => (
 						<button

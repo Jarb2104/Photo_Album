@@ -9,7 +9,6 @@ const initialState = {
 export const fetchTags = createAsyncThunk('tagsList/fetchTags', async () => {
 	const response = await fetch('/api/tags');
 	const data = await response.json();
-	console.log(data);
 	return data;
 });
 

@@ -1,10 +1,11 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Form from '@components/Form';
+import Form from '@components/Form/Form';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addNewPrompt } from '@app/redux/features/promptsSlice';
+import { fetchTags } from '@app/redux/features/tagsSlice';
 
 const CreatePrompt = () => {
 	const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const CreatePrompt = () => {
 	const [submitting, setSubmitting] = useState(false);
 	const [userPost, setUserPost] = useState({ prompt: '', imgUrl: '', tags: '' });
 
-	const createNewPrompt = async (e) => {
+	const createNewPrompt = (e) => {
 		e.preventDefault();
 		setSubmitting(true);
 
@@ -27,7 +28,8 @@ const CreatePrompt = () => {
 				imgUrl: userPost.imgUrl,
 			};
 
-			await dispatch(addNewPrompt(newPrompt)).unwrap();
+			dispatch(addNewPrompt(newPrompt));
+			dispatch(fetchTags());
 			router.push('/');
 		} catch (error) {
 			console.log(error);

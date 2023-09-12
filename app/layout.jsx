@@ -1,6 +1,6 @@
-import NavBar from '@components/NavBar';
 import AuthProvider from '@components/Providers/AuthProvider';
 import ReduxProvider from '../components/Providers/ReduxProvider';
+import NavBar from '@components/NavBar/NavBar';
 import '@styles/globals.css';
 
 export const metadata = {

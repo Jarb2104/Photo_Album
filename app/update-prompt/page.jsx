@@ -1,9 +1,10 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Form from '@components/Form';
+import Form from '@components/Form/Form';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPromptById, updatePrompt } from '@app/redux/features/promptsSlice';
+import { fetchTags } from '@app/redux/features/tagsSlice';
 
 const EditPrompt = () => {
 	const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const EditPrompt = () => {
 			if (promptData) {
 				setUserPost({
 					prompt: promptData.prompt,
-					tags: promptData.tags.map((t) => t.tag).toString(),
+					tags: promptData.tags.map((t) => t.tag).join(', '),
 					imgUrl: promptData.imgUrl,
 				});
 			} else {
@@ -31,7 +32,7 @@ const EditPrompt = () => {
 		}
 	}, [promptId]);
 
-	const updateChangedPrompt = async (e) => {
+	const updateChangedPrompt = (e) => {
 		e.preventDefault();
 		setSubmitting(true);
 
@@ -46,7 +47,8 @@ const EditPrompt = () => {
 					tags: userPost.tags,
 				},
 			};
-			await dispatch(updatePrompt(changedPrompt)).unwrap();
+			dispatch(updatePrompt(changedPrompt));
+			dispatch(fetchTags());
 			router.push('/');
 		} catch (error) {
 			console.log(error);

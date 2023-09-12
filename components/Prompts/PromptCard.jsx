@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import copyImage from '../../assets/icons/copy.svg';
 import tickImage from '../../assets/icons/tick.svg';
+import TagList from '@components/MostUsedTags/TagList';
 
 const PromptCard = ({ promptData, handleCardTagClick, handleChange, handleDelete }) => {
 	const [promptTest, setPromptTest] = useState('');
@@ -20,7 +21,7 @@ const PromptCard = ({ promptData, handleCardTagClick, handleChange, handleDelete
 	};
 
 	const handleUserClicked = () => {
-		router.push(`/profile/user-profile?id=${promptData.user?.id}`);
+		router.push(`/profile?id=${promptData.user?.id}`);
 	};
 
 	return (
@@ -64,18 +65,12 @@ const PromptCard = ({ promptData, handleCardTagClick, handleChange, handleDelete
 					className='rounded-lg border-2 border-blue-500 object-contain'
 				/>
 			</div>
-			<div className='flex gap-2'>
-				{promptData.tags.map((tag) => (
-					<button
-						key={tag.id}
-						type='button'
-						className='blue_btn'
-						onClick={() => handleCardTagClick && handleCardTagClick(tag.tag)}
-					>
-						{tag.tag}
-					</button>
-				))}
-			</div>
+			<TagList
+				tagData={promptData.tags}
+				lstClassName='flex gap-2'
+				btnClassName='blue_btn'
+				handleListTagClick={handleCardTagClick}
+			/>
 			{session?.user.id === promptData.user?.id && pathName === '/profile' && (
 				<div className='mt-5 flex-end gap-4 border-t border-gray-100 pt-3'>
 					<p

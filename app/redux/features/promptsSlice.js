@@ -31,7 +31,7 @@ export const updatePrompt = createAsyncThunk('promptsList/updatePrompt', async (
 });
 
 export const deletePrompt = createAsyncThunk('promptsList/deletePrompt', async (promptId) => {
-	await fetch(`api/prompt/${promptId}`, { method: 'DELETE' });
+	const response = await fetch(`api/prompt/${promptId}`, { method: 'DELETE' });
 	const data = await response.json();
 	return data;
 });

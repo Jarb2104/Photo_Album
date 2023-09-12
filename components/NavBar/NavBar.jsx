@@ -57,9 +57,9 @@ const NavBar = () => {
 						>
 							Sign Out
 						</button>
-						<Link href='/profile'>
+						<Link href={`/profile?id=${session?.user.id}`}>
 							<Image
-								src={session?.user.image}
+								src={session?.user.image ? session?.user.image : ProfileAsset}
 								width={37}
 								height={37}
 								className='rounded-full'
@@ -88,7 +88,7 @@ const NavBar = () => {
 				{session?.user ? (
 					<div className='flex'>
 						<Image
-							src={session?.user.image}
+							src={session?.user.image ? session?.user.image : ProfileAsset}
 							width={37}
 							height={37}
 							className='rounded-full'
@@ -99,7 +99,7 @@ const NavBar = () => {
 						{toggleDropDown && (
 							<div className='dropdown'>
 								<Link
-									href='/profile'
+									href={`/profile?id=${session?.user.id}`}
 									className='dropdown_link'
 									onClick={() => settoggleDropDown(false)}
 								>
